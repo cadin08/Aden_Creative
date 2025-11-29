@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="es">
+<head>
+<link rel="icon" type="image/png" href="https://images.vexels.com/media/users/3/189101/isolated/preview/693f7da0ef1625c6b281f1428a7ecdbb-fuegos-artificiales-de-2-anillos-degradado-verde.png?w=360">
+<meta charset="utf-8" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Aden Creative</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07101a;--panel:#0e1418;--muted:rgba(255,255,255,0.58);--neon:#00ff6a;--glass:rgba(255,255,255,0.03)}
+*{box-sizing:border-box;font-family:Inter,system-ui,Arial,sans-serif}
+html,body{height:100%;margin:0;background:linear-gradient(180deg,#041016 0%, #08121a 100%);color:#dfffe7}
+.container{max-width:1280px;margin:32px auto;padding:24px;display:grid;grid-template-columns:320px 1fr;gap:24px}
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:16px;padding:18px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 10px 30px rgba(2,6,23,0.7)}
+.header{display:flex;gap:12px;align-items:center;margin-bottom:6px}
+.brand-title{font-weight:800;font-size:18px}
+.brand-sub{color:var(--muted);font-size:13px}
+.uploader{margin-top:12px;padding:14px;border-radius:12px;border:1px dashed rgba(255,255,255,0.04);text-align:center;background:rgba(255,255,255,0.01);cursor:pointer}
+.uploader:hover{border-color:rgba(0,255,106,0.15);box-shadow:0 8px 30px rgba(0,255,106,0.03) inset}
+.controls{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.select,button{background:transparent;color:var(--neon);border:1px solid rgba(0,255,106,0.08);padding:10px;border-radius:10px;font-weight:700;cursor:pointer}
+.big-btn{background:linear-gradient(90deg, rgba(0,255,106,0.14), rgba(0,255,106,0.06));color:#021a0f;border:none;padding:10px 14px;border-radius:12px}
+.small{font-size:13px;padding:8px 10px}
+.logs{margin-top:12px;height:120px;overflow:auto;padding:12px;border-radius:10px;background:rgba(0,0,0,0.28);font-family:monospace;font-size:13px;color:#bfeed2;border:1px solid rgba(255,255,255,0.02)}
+.preview-area{display:flex;flex-direction:column;gap:12px}
+.preview-card{display:grid;grid-template-columns:1fr 420px;gap:18px;align-items:start}
+.preview-stage{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));border-radius:12px;padding:16px;min-height:440px;border:1px solid rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:center;position:relative}
+.ba-wrap{width:100%;max-width:900px;border-radius:10px;overflow:hidden;position:relative}
+.ba-img{display:block;width:100%;height:auto}
+.ba-overlay{position:absolute;top:0;left:0;height:100%;width:50%;overflow:hidden}
+.ba-handle{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:transparent;border-radius:50%;width:50px;height:50px;display:flex;align-items:center;justify-content:center;cursor:ew-resize}
+.ba-handle .dot{width:44px;height:44px;border-radius:50%;border:2px solid var(--neon);box-shadow:0 6px 30px rgba(0,255,106,0.12);display:flex;align-items:center;justify-content:center}
+.right-panel{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.02)}
+.info-row{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:10px;color:var(--muted)}
+.footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;color:var(--muted);font-size:13px}
+@media(max-width:1000px){.container{grid-template-columns:1fr;padding:12px}.preview-card{grid-template-columns:1fr}.preview-stage{min-height:320px}}
+</style>
+</head>
+<body>
+  <div class="container">
+    <aside class="card">
+      <div class="header">
+        <div>
+          <div class="brand-title">Aden Creative</div>
+          <div class="brand-sub">Upscale · Restore · Sharpen — Profesional</div>
+        </div>
+      </div>
+
+      <div class="uploader" id="uploaderLabel">
+        <input id="fileInput" type="file" accept="image/*" hidden>
+        <div style="font-weight:700;color:var(--neon)">Haz clic o arrastra una imagen</div>
+        <div style="color:var(--muted);font-size:13px;margin-top:6px">JPG / PNG / WebP · max 20MB</div>
+      </div>
+
+      <div class="controls">
+        <select id="scaleSelect" class="select small" aria-label="Factor de escala">
+          <option value="2">×2 (recomendado)</option>
+          <option value="4">×4 (más lento)</option>
+        </select>
+        <select id="algoSelect" class="select small">
+          <option value="auto">Auto</option>
+          <option value="sharp">Nitidez</option>
+          <option value="denoise">Reducir ruido</option>
+        </select>
+        <button id="demoBtn" class="big-btn">Modo demo</button>
+        <button id="apiBtn" class="small">Procesar con API</button>
+      </div>
+
+      <div style="margin-top:12px;color:var(--muted);font-size:13px">Integraciones: DeepAI (Super Resolution), Replicate (Real-ESRGAN), Upscale.media. Usa backend para keys en producción.</div>
+
+      <div class="logs" id="logs" aria-live="polite"></div>
+      <div class="footer">Docs · Seguridad: guarda keys en servidor</div>
+    </aside>
+
+    <main class="preview-area">
+      <div class="card preview-card">
+        <div class="preview-stage">
+          <div class="ba-wrap" id="baWrap">
+            <img id="origImg" class="ba-img" src="" alt="Original" style="display:none">
+            <div class="ba-overlay" id="baOverlay" style="width:50%">
+              <img id="enhImg" class="ba-img" src="" alt="Enhanced" style="display:none">
+            </div>
+            <div class="ba-handle" id="baHandle"><div class="dot">⇆</div></div>
+          </div>
+        </div>
+
+        <div class="right-panel">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:800">Comparador — Antes / Después</div>
+            <div style="display:flex;gap:8px">
+              <button id="downloadBtn" class="big-btn" disabled>Descargar</button>
+              <button id="resetBtn" class="select small">Reset</button>
+            </div>
+          </div>
+
+          <div style="margin-top:12px;color:var(--muted)">Controles avanzados</div>
+          <label style="display:block;margin-top:10px;color:var(--muted)">Calidad final
+            <input id="qualityRange" type="range" min="50" max="100" value="90" style="width:100%;margin-top:8px">
+          </label>
+
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <button id="beforeAfterBtn" class="select small">Toggle Antes/Después</button>
+            <button id="compareSliderBtn" class="select small">Activar slider</button>
+          </div>
+
+          <div style="margin-top:14px;font-size:13px;color:var(--muted)">
+            IA gratuitas sugeridas:
+            <ul style="margin:8px 0 0 18px;color:var(--muted)">
+              <li>DeepAI — Super Resolution (plan con créditos gratis limitados).</li>
+              <li>Replicate — Real-ESRGAN (uso via proxy backend recomendado).</li>
+              <li>Upscale.media — opción web y API.</li>
+            </ul>
+          </div>
+
+          <div style="margin-top:12px;color:var(--muted);font-size:12px">Nota: no pongas keys en frontend. Usa proxy para producción. Ejemplos en el código.</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+<script>
+/* ---------- DOM ---------- */
+const uploaderLabel = document.getElementById('uploaderLabel');
+const fileInput = document.getElementById('fileInput');
+const origImg = document.getElementById('origImg');
+const enhImg = document.getElementById('enhImg');
+const baOverlay = document.getElementById('baOverlay');
+const baHandle = document.getElementById('baHandle');
+const baWrap = document.getElementById('baWrap');
+const demoBtn = document.getElementById('demoBtn');
+const apiBtn = document.getElementById('apiBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const resetBtn = document.getElementById('resetBtn');
+const logs = document.getElementById('logs');
+let currentFile = null; let enhancedBlob = null;
+
+function log(msg){ const t=new Date().toLocaleTimeString(); logs.innerText = `[${t}] ${msg}
+` + logs.innerText; }
+
+/* Drag & Drop behavior */
+['dragenter','dragover'].forEach(ev => uploaderLabel.addEventListener(ev, e=>{ e.preventDefault(); uploaderLabel.style.borderColor='rgba(0,255,106,0.18)'; }));
+['dragleave','drop'].forEach(ev => uploaderLabel.addEventListener(ev, e=>{ e.preventDefault(); uploaderLabel.style.borderColor=''; }));
+uploaderLabel.addEventListener('drop', (e)=>{ const f = e.dataTransfer.files?.[0]; if(f) handleFile(f); });
+fileInput.addEventListener('change', (e)=>{ const f = e.target.files?.[0]; if(f) handleFile(f); });
+uploaderLabel.addEventListener('click', ()=> fileInput.click());
+
+/* Handle file */
+function handleFile(file){ if(!file.type.startsWith('image/')){ log('Tipo no soportado'); return; } currentFile = file; const url = URL.createObjectURL(file); origImg.src = url; origImg.style.display = 'block'; enhImg.style.display='none'; baOverlay.style.width='50%'; log('Imagen cargada: ' + file.name); }
+
+/* Before/after slider */
+let dragging = false;
+baHandle.addEventListener('pointerdown', e=>{ dragging=true; baHandle.setPointerCapture(e.pointerId); });
+window.addEventListener('pointerup', ()=>{ dragging=false; });
+window.addEventListener('pointermove', (e)=>{ if(!dragging) return; const rect = baWrap.getBoundingClientRect(); let x = e.clientX - rect.left; x = Math.max(0, Math.min(rect.width, x)); const pct = (x/rect.width)*100; baOverlay.style.width = pct + '%'; baHandle.style.left = pct + '%'; });
+
+/* Toggle before/after */
+document.getElementById('beforeAfterBtn').addEventListener('click', ()=>{ if(baOverlay.style.width==='100%'){ baOverlay.style.width='50%'; baHandle.style.left='50%'; } else { baOverlay.style.width='100%'; baHandle.style.left='100%'; } });
+
+document.getElementById('compareSliderBtn').addEventListener('click', ()=>{ alert('Slider activo: arrastra el círculo sobre la imagen.'); });
+
+/* Demo upscaler (client-side canvas) */
+async function demoUpscale(){ if(!currentFile) return alert('Sube una imagen primero.'); log('Modo demo: procesando...'); const scale = parseInt(document.getElementById('scaleSelect').value || '2'); const algo = document.getElementById('algoSelect').value; const img = await loadImage(URL.createObjectURL(currentFile)); const off = document.createElement('canvas'); off.width = img.naturalWidth * scale; off.height = img.naturalHeight * scale; const ctx = off.getContext('2d'); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = (algo==='sharp') ? 'high' : 'medium'; ctx.drawImage(img, 0, 0, off.width, off.height);
+  // optional simple unsharp
+  if(algo==='sharp'){ try{ const id = ctx.getImageData(0,0,off.width,off.height); const blur = simpleBoxBlur(id, off.width, off.height, 1); const d=id.data, b=blur.data; for(let i=0;i<d.length;i++){ d[i]=Math.max(0,Math.min(255, d[i] + 0.5*(d[i]-b[i]))); } ctx.putImageData(id,0,0); }catch(e){ log('Sharpen demo falló: '+e.message); } }
+  off.toBlob(b=>{ enhancedBlob = b; enhImg.src = URL.createObjectURL(b); enhImg.style.display='block'; baOverlay.style.width='50%'; downloadBtn.disabled=false; log('Demo: resultado listo'); }, 'image/png'); }
+
+demoBtn.addEventListener('click', demoUpscale);
+
+function loadImage(src){ return new Promise((res,rej)=>{ const i=new Image(); i.crossOrigin='anonymous'; i.onload=()=>res(i); i.onerror=rej; i.src=src; }); }
+
+function simpleBoxBlur(imgData, w, h, r=1){ const src = imgData.data; const dst = new Uint8ClampedArray(src.length); for(let y=0;y<h;y++){ for(let x=0;x<w;x++){ let rSum=0,gSum=0,bSum=0,aSum=0,count=0; for(let oy=-r;oy<=r;oy++){ for(let ox=-r;ox<=r;ox++){ const nx=x+ox, ny=y+oy; if(nx>=0 && nx<w && ny>=0 && ny<h){ const idx=(ny*w+nx)*4; rSum+=src[idx]; gSum+=src[idx+1]; bSum+=src[idx+2]; aSum+=src[idx+3]; count++; } } } const idx=(y*w+x)*4; dst[idx]=Math.round(rSum/count); dst[idx+1]=Math.round(gSum/count); dst[idx+2]=Math.round(bSum/count); dst[idx+3]=Math.round(aSum/count); } } return new ImageData(new Uint8ClampedArray(dst.buffer), w, h); }
+
+/* Download */
+downloadBtn.addEventListener('click', ()=>{ if(!enhancedBlob) return alert('No hay imagen mejorada.'); const a=document.createElement('a'); a.href=URL.createObjectURL(enhancedBlob); a.download = (currentFile?.name?.replace(/\.(jpg|jpeg|png)$/i,'') || 'aden') + '_enhanced.png'; document.body.appendChild(a); a.click(); a.remove(); log('Descarga iniciada'); });
+
+/* Reset */
+resetBtn.addEventListener('click', ()=>{ currentFile=null; enhancedBlob=null; origImg.src=''; enhImg.src=''; origImg.style.display='none'; enhImg.style.display='none'; baOverlay.style.width='50%'; downloadBtn.disabled=true; log('Reset completo'); });
+
+/* API templates - use backend proxy in production */
+async function callDeepAI(blob){ log('Llamando DeepAI (ejemplo). Define window.DEEPAI_API_KEY para probar.'); const fd=new FormData(); fd.append('image', blob); const res = await fetch('https://api.deepai.org/api/torch-srgan',{ method:'POST', headers:{ 'Api-Key': window.DEEPAI_API_KEY || '' }, body: fd }); if(!res.ok){ const t=await res.text(); throw new Error(t); } const j=await res.json(); if(j.output_url){ const b=await (await fetch(j.output_url)).blob(); return b; } throw new Error('Respuesta DeepAI inesperada'); }
+
+async function callProxyUpScale(blob){ log('Llamando a proxy /api/upscale (implementa backend)'); const fd=new FormData(); fd.append('image', blob); const res = await fetch('/api/upscale',{method:'POST',body:fd}); if(!res.ok) throw new Error('Proxy error'); return await res.blob(); }
+
+apiBtn.addEventListener('click', async ()=>{
+  if(!currentFile) return alert('Sube una imagen primero');
+  const method = confirm('Usar DeepAI directamente en frontend? (Aceptar = DeepAI, Cancelar = proxy backend recomendado)');
+  if(method){ try{ const blob = currentFile.slice(0, currentFile.size, currentFile.type); const out = await callDeepAI(blob); enhancedBlob = out; enhImg.src = URL.createObjectURL(out); enhImg.style.display='block'; downloadBtn.disabled=false; log('DeepAI: resultado mostrado'); }catch(e){ log('Error DeepAI: '+e.message); alert('Error: '+e.message); } } else { try{ const blob = currentFile.slice(0, currentFile.size, currentFile.type); const out = await callProxyUpScale(blob); enhancedBlob = out; enhImg.src = URL.createObjectURL(out); enhImg.style.display='block'; downloadBtn.disabled=false; log('Proxy: resultado mostrado'); }catch(e){ log('Error proxy: '+e.message); alert('Error: '+e.message); } }
+});
+
+/* initial */
+log('Aden Creative listo — sube una imagen para empezar.');
+</script>
+</body>
+</html>
